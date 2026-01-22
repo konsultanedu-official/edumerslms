@@ -31,10 +31,27 @@ export function UpdatePasswordForm({
     setError(null);
 
     try {
-      const { error } = await supabase.auth.updateUser({ password });
+      const { data: { user }, error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/protected");
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        const role = profile?.role;
+        if (role === "student") {
+          router.push("/student/dashboard");
+        } else if (role === "tutor") {
+          router.push("/tutor/dashboard");
+        } else if (role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/");
+        }
+      }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {

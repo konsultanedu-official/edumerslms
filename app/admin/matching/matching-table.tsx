@@ -40,7 +40,7 @@ interface PrivateClass {
         email: string;
     } | null;
     package: {
-        title: string;
+        name: string;
     } | null;
 }
 
@@ -102,7 +102,7 @@ export function MatchingTable({ classes, tutors }: MatchingTableProps) {
                                     <div className="font-medium">{c.student_profile?.full_name || "Unknown"}</div>
                                     <div className="text-xs text-muted-foreground">{c.student_profile?.email}</div>
                                 </TableCell>
-                                <TableCell>{c.package?.title}</TableCell>
+                                <TableCell>{c.package?.name}</TableCell>
                                 <TableCell>
                                     <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                                         Perlu Tutor

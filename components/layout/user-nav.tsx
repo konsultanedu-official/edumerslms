@@ -31,7 +31,7 @@ export function UserNav() {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.refresh();
-        router.push("/login");
+        router.push("/auth/login");
     };
 
     if (!user) return null;

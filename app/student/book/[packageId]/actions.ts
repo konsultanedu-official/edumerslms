@@ -41,7 +41,7 @@ export async function submitBooking(prevState: any, formData: FormData) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect("/login");
+        redirect("/auth/login");
     }
 
     // 2. Fetch Package Details (for duration and price)

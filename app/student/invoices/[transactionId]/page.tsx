@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+
+export const dynamic = "force-dynamic";
 import { formatIDR } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

@@ -43,7 +43,7 @@ export async function updateSession(request: NextRequest) {
     ) {
         // A. Check Authentication
         if (!user) {
-            url.pathname = '/login'
+            url.pathname = '/auth/login'
             return NextResponse.redirect(url)
         }
 
@@ -105,7 +105,7 @@ export async function updateSession(request: NextRequest) {
 
     // 3. Auth Redirects (Login/Register)
     // If user is already logged in, redirect to their dashboard
-    if (user && (url.pathname === '/login' || url.pathname === '/register' || url.pathname === '/auth/login' || url.pathname === '/auth/register')) {
+    if (user && (url.pathname === '/auth/login' || url.pathname === '/auth/sign-up')) {
         const { data: profile } = await supabase
             .from('profiles')
             .select('role')

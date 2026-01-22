@@ -60,7 +60,7 @@ export function TutorSidebar() {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.refresh();
-        router.push("/login?role=tutor");
+        router.push("/auth/login");
     };
 
     return (

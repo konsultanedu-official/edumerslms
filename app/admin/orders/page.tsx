@@ -18,7 +18,7 @@ export default async function OrdersPage() {
             private_classes(
                 id,
                 status,
-                package:private_class_packages(title, price, duration_days)
+                package:private_class_packages(name, price, duration_days)
             )
         `)
         .order("created_at", { ascending: false });

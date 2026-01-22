@@ -108,7 +108,7 @@ async function PackageDetails({ params }: { params: Promise<{ slug: string }> })
                     </div>
 
                     <Button className="w-full h-12 text-lg font-semibold shadow-lg shadow-blue-500/20" asChild>
-                        <Link href={`/login?redirect=/student/book/${pkg.id}`}>
+                        <Link href={`/auth/login?redirect=/student/book/${pkg.id}`}>
                             Booking Sekarang
                         </Link>
                     </Button>

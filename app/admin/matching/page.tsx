@@ -21,7 +21,7 @@ export default async function MatchingPage() {
                 id,
                 profile:profiles(full_name, email)
             ),
-            package:private_class_packages(title)
+            package:private_class_packages(name)
         `)
         .eq("status", "pending_match")
         .order("created_at", { ascending: true });
@@ -46,15 +46,24 @@ export default async function MatchingPage() {
     }
 
     // Flatten student profile data for table
-    const formattedClasses = classes?.map(c => ({
-        ...c,
-        student_profile: c.student_profile?.profile
-            ? {
-                full_name: (c.student_profile.profile as any).full_name,
-                email: (c.student_profile.profile as any).email
-            }
-            : { full_name: "Unknown", email: "-" }
-    })) || [];
+    const formattedClasses = classes?.map(c => {
+        // Safe access because Supabase return types can be nested arrays or single objects depending on relationship
+        const studentProfile = Array.isArray(c.student_profile) ? c.student_profile[0] : c.student_profile;
+        const profile = studentProfile?.profile;
+        const profileData = Array.isArray(profile) ? profile[0] : profile;
+
+        return {
+            ...c,
+            // Force type casting or safe access
+            package: Array.isArray(c.package) ? c.package[0] : c.package,
+            student_profile: profileData
+                ? {
+                    full_name: profileData.full_name,
+                    email: profileData.email
+                }
+                : { full_name: "Unknown", email: "-" }
+        };
+    }) || [];
 
     return (
         <div className="space-y-6">
@@ -65,7 +74,13 @@ export default async function MatchingPage() {
                 </p>
             </div>
 
-            <MatchingTable classes={formattedClasses} tutors={tutors || []} />
+            <MatchingTable
+                classes={formattedClasses}
+                tutors={tutors?.map(t => ({
+                    ...t,
+                    profiles: Array.isArray(t.profiles) ? t.profiles[0] : t.profiles
+                })) || []}
+            />
         </div>
     );
 }

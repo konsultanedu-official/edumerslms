@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+
+export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import { BookingForm } from "./booking-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

@@ -17,8 +17,8 @@ export async function GET(request: NextRequest) {
       token_hash,
     });
     if (!error) {
-      // redirect user to specified redirect URL or root of app
-      redirect(next);
+      // redirect user to login page
+      redirect(`/auth/login?message=Konfirmasi Berhasil`);
     } else {
       // redirect the user to an error page with some instructions
       redirect(`/auth/error?error=${error?.message}`);

@@ -33,7 +33,7 @@ import { toast } from "sonner"; // Assuming sonner is installed or will use basi
 const formSchema = z.object({
     packageId: z.string().uuid(),
     startDate: z.date({
-        required_error: "A start date is required.",
+        message: "A start date is required.",
     }),
     researchTitle: z.string().min(5, {
         message: "Research title must be at least 5 characters.",

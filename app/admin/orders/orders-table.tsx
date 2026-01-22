@@ -29,7 +29,7 @@ interface Transaction {
         id: string;
         status: string;
         package: {
-            title: string;
+            name: string;
             price: number;
             duration_days: number;
         } | null;
@@ -78,7 +78,7 @@ export function OrdersTable({ transactions }: OrdersTableProps) {
                     ) : (
                         transactions.map((tx) => {
                             const pClass = tx.private_classes[0];
-                            const pkgTitle = pClass?.package?.title || "Unknown Package";
+                            const pkgTitle = pClass?.package?.name || "Unknown Package";
 
                             return (
                                 <TableRow key={tx.id} className="hover:bg-muted/10 transition-colors">

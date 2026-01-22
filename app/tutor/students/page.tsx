@@ -22,7 +22,7 @@ export default async function MyStudentsPage() {
             research_title,
             start_date,
             end_date,
-            package:private_class_packages(title, duration_days),
+            package:private_class_packages(name, duration_days),
             student_profile:student_profiles(
                 university,
                 study_program,
@@ -37,13 +37,24 @@ export default async function MyStudentsPage() {
         return <div className="p-4 text-red-500">Gagal memuat data siswa.</div>;
     }
 
-    const formattedClasses = classes?.map(c => ({
-        ...c,
-        student_profile: c.student_profile ? {
-            ...c.student_profile,
-            profile: Array.isArray(c.student_profile.profile) ? c.student_profile.profile[0] : c.student_profile.profile
-        } : null
-    })) || [];
+    const formattedClasses = classes?.map(c => {
+        // Safe access for student_profile array
+        const studentProfileData = Array.isArray(c.student_profile) ? c.student_profile[0] : c.student_profile;
+
+        // Safe access for nested profile array within student_profile
+        const profileData = studentProfileData?.profile;
+        const finalProfile = Array.isArray(profileData) ? profileData[0] : profileData;
+
+        return {
+            ...c,
+            // Safe access for package array
+            package: Array.isArray(c.package) ? c.package[0] : c.package,
+            student_profile: studentProfileData ? {
+                ...studentProfileData,
+                profile: finalProfile
+            } : null
+        };
+    }) || [];
 
     return (
         <div className="space-y-6">

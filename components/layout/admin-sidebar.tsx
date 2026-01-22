@@ -60,7 +60,7 @@ export function AdminSidebar() {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.refresh();
-        router.push("/login?role=admin");
+        router.push("/auth/login");
     };
 
     return (

@@ -26,7 +26,7 @@ interface StudentClass {
         } | null;
     } | null;
     package: {
-        title: string;
+        name: string;
         duration_days: number;
     } | null;
     status: string;
@@ -78,7 +78,7 @@ export function StudentListTable({ classes }: StudentListTableProps) {
                                     <div className="text-xs text-muted-foreground">{student?.study_program}</div>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant="outline">{c.package?.title}</Badge>
+                                    <Badge variant="outline">{c.package?.name}</Badge>
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center gap-2">

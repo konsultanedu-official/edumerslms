@@ -39,13 +39,19 @@ export default async function SchedulePage() {
     }
 
     // Flatten data safely
-    const formattedSchedules = schedules?.map(s => ({
-        ...s,
-        student_profile: s.student_profile ? {
-            ...s.student_profile,
-            profile: Array.isArray(s.student_profile.profile) ? s.student_profile.profile[0] : s.student_profile.profile
-        } : null
-    })) || [];
+    const formattedSchedules = schedules?.map(s => {
+        const studentProfileData = Array.isArray(s.student_profile) ? s.student_profile[0] : s.student_profile;
+        const profileData = studentProfileData?.profile;
+        const finalProfile = Array.isArray(profileData) ? profileData[0] : profileData;
+
+        return {
+            ...s,
+            student_profile: studentProfileData ? {
+                ...studentProfileData,
+                profile: finalProfile
+            } : null
+        };
+    }) || [];
 
     return (
         <div className="space-y-6">
