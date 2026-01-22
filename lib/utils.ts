@@ -15,27 +15,34 @@ export function formatIDR(amount: number) {
   }).format(amount);
 }
 
-export function calculateEndDate(startDate: Date, durationDays: number): Date {
+/**
+ * Calculates the end date based on working days (skipping weekends and optional holidays)
+ * @param startDate The date to start counting from
+ * @param durationDays Number of working days
+ * @param holidays Optional list of holiday date strings (YYYY-MM-DD)
+ */
+export function calculateEndDate(startDate: Date, durationDays: number, holidays: string[] = []): Date {
   let currentDate = new Date(startDate);
   let daysCounted = 0;
 
-  // Clone date to avoid mutating the original if passed by reference (though Date ctor creates new)
-  // Ensure we start checking from the given start date.
-
-  // Logic: We need to find the N-th working day.
-  // If startDate is a working day, it's Day 1.
-  // If startDate is a weekend, we hunt for the first working day to be Day 1?
-  // Or do we just exclude weekends from the count?
-  // The logic "Tambahkan hari hanya jika BUKAN Sabtu/Minggu" implies we skip weekends in validity check.
+  const holidaySet = new Set(holidays);
 
   while (daysCounted < durationDays) {
-    const day = currentDate.getDay();
-    // 0 is Sunday, 6 is Saturday
-    if (day !== 0 && day !== 6) {
+    const day = currentDate.getDay(); // 0: Sunday, 6: Saturday
+
+    // Format date as YYYY-MM-DD for holiday check
+    const dateStr = currentDate.getFullYear() + '-' +
+      String(currentDate.getMonth() + 1).padStart(2, '0') + '-' +
+      String(currentDate.getDate()).padStart(2, '0');
+
+    const isWeekend = day === 0 || day === 6;
+    const isHoliday = holidaySet.has(dateStr);
+
+    if (!isWeekend && !isHoliday) {
       daysCounted++;
     }
 
-    // If we haven't reached the duration yet, move to next day
+    // Move to next day if we still need more working days
     if (daysCounted < durationDays) {
       currentDate.setDate(currentDate.getDate() + 1);
     }

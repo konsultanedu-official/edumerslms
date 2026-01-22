@@ -46,23 +46,26 @@ export async function submitBooking(prevState: any, formData: FormData) {
         redirect("/auth/login");
     }
 
-    // 2. Fetch Package Details (for duration and price)
-    const { data: pkg, error: pkgError } = await supabase
-        .from("private_class_packages")
-        .select("price, duration_days")
-        .eq("id", packageId)
-        .single();
+    // 2. Fetch Package Details & Holidays in Parallel
+    const [
+        { data: pkg, error: pkgError },
+        { data: holidays, error: holidayError }
+    ] = await Promise.all([
+        supabase.from("private_class_packages").select("price, duration_days").eq("id", packageId).single(),
+        supabase.from("holidays").select("date")
+    ]);
 
     if (pkgError || !pkg) {
         return { error: "Package not found." };
     }
 
+    const holidayDates = holidays?.map(h => h.date) || [];
     let transactionId: string | null = null;
 
     try {
-        // 3. Calculate End Date using Helper
+        // 3. Calculate End Date using Helper (including holidays)
         const start = new Date(startDate);
-        const endDate = calculateEndDate(start, pkg.duration_days);
+        const endDate = calculateEndDate(start, pkg.duration_days, holidayDates);
 
         // 4. Create Transaction (Pending)
         const { data: transaction, error: transError } = await supabase
@@ -73,6 +76,8 @@ export async function submitBooking(prevState: any, formData: FormData) {
                 status: "pending",
                 payment_proof_url: null, // Initial state
                 description: `Booking Private Class: ${researchTitle}`,
+                service_type: "private_class",
+                service_id: packageId
             })
             .select("id")
             .single();
@@ -86,7 +91,7 @@ export async function submitBooking(prevState: any, formData: FormData) {
 
         // 5. Create Private Class (Pending Payment)
         const { error: classError } = await supabase.from("private_classes").insert({
-            student_id: user.id, // linked via id
+            student_id: user.id,
             package_id: packageId,
             tutor_id: null,
             transaction_id: transaction.id,
@@ -107,7 +112,7 @@ export async function submitBooking(prevState: any, formData: FormData) {
         return { error: "An unexpected error occurred. Please try again." };
     }
 
-    // 6. Redirect to Payment/Success Page
+    // 6. Redirect to Invoice Page
     if (transactionId) {
         redirect(`/student/invoices/${transactionId}`);
     }
