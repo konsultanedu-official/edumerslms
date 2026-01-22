@@ -24,11 +24,14 @@ interface PackageCardProps {
 }
 
 export function PackageCard({
+    id,
     name,
     slug,
     description,
     duration_days,
     price,
+    is_active,
+    benefits,
 }: PackageCardProps) {
     return (
         <Card className="flex flex-col h-full hover:shadow-lg transition-shadow border-primary/20">
@@ -61,14 +64,25 @@ export function PackageCard({
                             Termasuk:
                         </p>
                         <ul className="text-sm space-y-1">
-                            <li className="flex items-center gap-2">
-                                <Check className="w-3 h-3 text-green-500" />
-                                <span>1-on-1 dengan Tutor</span>
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <Check className="w-3 h-3 text-green-500" />
-                                <span>Diskusi & Review Progress</span>
-                            </li>
+                            {benefits && Array.isArray(benefits) && benefits.length > 0 ? (
+                                (benefits as string[]).map((benefit, index) => (
+                                    <li key={index} className="flex items-center gap-2">
+                                        <Check className="w-3 h-3 text-green-500" />
+                                        <span>{benefit}</span>
+                                    </li>
+                                ))
+                            ) : (
+                                <>
+                                    <li className="flex items-center gap-2">
+                                        <Check className="w-3 h-3 text-green-500" />
+                                        <span>1-on-1 dengan Tutor</span>
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <Check className="w-3 h-3 text-green-500" />
+                                        <span>Diskusi & Review Progress</span>
+                                    </li>
+                                </>
+                            )}
                         </ul>
                     </div>
                 </div>

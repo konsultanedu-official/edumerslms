@@ -9,6 +9,8 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import { PackageCard } from "@/components/services/package-card";
+import { Separator } from "@/components/ui/separator";
 
 async function PrivateClassesList() {
     const supabase = await createClient();
@@ -159,22 +161,65 @@ function ClassesListSkeleton() {
     )
 }
 
-export default function PrivateClassesPage() {
+export default async function PrivateClassesPage() {
+    const supabase = await createClient();
+
+    // Fetch available packages for the catalog section
+    const { data: packages, error: pkgError } = await supabase
+        .from("private_class_packages")
+        .select("*")
+        .eq("is_active", true)
+        .order("price", { ascending: true });
+
+    if (pkgError) {
+        console.error("Error fetching packages:", pkgError);
+    }
+
     return (
-        <div className="container mx-auto py-8">
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Kelas Private Saya</h1>
-                    <p className="text-muted-foreground">Kelola jadwal bimbingan dan status kelas Anda.</p>
+        <div className="container mx-auto py-8 space-y-12">
+            <div>
+                <div className="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">Kelas Private Saya</h1>
+                        <p className="text-muted-foreground">Kelola jadwal bimbingan dan status kelas Anda.</p>
+                    </div>
                 </div>
-                <Button asChild>
-                    <Link href="/services">Tambah Kelas Baru</Link>
-                </Button>
+
+                <Suspense fallback={<ClassesListSkeleton />}>
+                    <PrivateClassesList />
+                </Suspense>
             </div>
 
-            <Suspense fallback={<ClassesListSkeleton />}>
-                <PrivateClassesList />
-            </Suspense>
+            <Separator />
+
+            <div className="space-y-8">
+                <div>
+                    <h2 className="text-2xl font-bold tracking-tight">Katalog Paket Bimbingan</h2>
+                    <p className="text-muted-foreground">Pilih paket bimbingan yang sesuai dengan kebutuhan riset Anda.</p>
+                </div>
+
+                {!packages || packages.length === 0 ? (
+                    <div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted/20">
+                        <p className="text-muted-foreground">Belum ada paket tersedia saat ini.</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {packages.map((pkg) => (
+                            <PackageCard
+                                key={pkg.id}
+                                id={pkg.id}
+                                name={pkg.name}
+                                slug={pkg.slug}
+                                description={pkg.description}
+                                duration_days={pkg.duration_days}
+                                price={pkg.price}
+                                is_active={pkg.is_active}
+                                benefits={pkg.benefits_template}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

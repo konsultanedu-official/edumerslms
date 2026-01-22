@@ -1,8 +1,10 @@
+
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { calculateEndDate } from "@/lib/utils";
 
 const bookingSchema = z.object({
     packageId: z.string().uuid(),
@@ -58,19 +60,9 @@ export async function submitBooking(prevState: any, formData: FormData) {
     let transactionId: string | null = null;
 
     try {
-        // 3. Calculate End Date using DB Function
-        const { data: endDate, error: calcError } = await supabase.rpc(
-            "calculate_end_date",
-            {
-                p_start_date: startDate,
-                p_working_days: pkg.duration_days,
-            }
-        );
-
-        if (calcError) {
-            console.error("Calculate End Date Error:", calcError);
-            throw new Error("Failed to calculate end date");
-        }
+        // 3. Calculate End Date using Helper
+        const start = new Date(startDate);
+        const endDate = calculateEndDate(start, pkg.duration_days);
 
         // 4. Create Transaction (Pending)
         const { data: transaction, error: transError } = await supabase
