@@ -35,8 +35,8 @@ type FeeConfig = {
 
 type BonusRule = {
     id: string
-    min_turnover: number
-    max_turnover: number
+    min_daily_revenue: number
+    max_daily_revenue: number
     bonus_amount: number
 }
 
@@ -79,7 +79,7 @@ export default function FeesPage() {
         const { data, error } = await supabase
             .from("admin_bonus_rules")
             .select("*")
-            .order("min_turnover", { ascending: true })
+            .order("min_daily_revenue", { ascending: true })
 
         if (error) toast.error("Failed to fetch bonus rules")
         else setBonusRules(data || [])
@@ -111,8 +111,8 @@ export default function FeesPage() {
     // --- BONUS HANDLERS ---
     const handleSaveBonus = async () => {
         const payload = {
-            min_turnover: currentBonus.min_turnover || 0,
-            max_turnover: currentBonus.max_turnover || 0,
+            min_daily_revenue: currentBonus.min_daily_revenue || 0,
+            max_daily_revenue: currentBonus.max_daily_revenue || 0,
             bonus_amount: currentBonus.bonus_amount || 0
         }
 
@@ -151,8 +151,8 @@ export default function FeesPage() {
 
     const startCreateBonus = () => {
         setCurrentBonus({
-            min_turnover: 0,
-            max_turnover: 0,
+            min_daily_revenue: 0,
+            max_daily_revenue: 0,
             bonus_amount: 0
         })
         setIsEditingBonus(false)
@@ -234,9 +234,9 @@ export default function FeesPage() {
                         <TableBody>
                             {bonusRules.map(rule => (
                                 <TableRow key={rule.id}>
-                                    <TableCell>Rp {rule.min_turnover.toLocaleString()}</TableCell>
-                                    <TableCell>Rp {rule.max_turnover.toLocaleString()}</TableCell>
-                                    <TableCell className="font-bold text-green-600">Rp {rule.bonus_amount.toLocaleString()}</TableCell>
+                                    <TableCell>Rp {rule.min_daily_revenue?.toLocaleString()}</TableCell>
+                                    <TableCell>Rp {rule.max_daily_revenue?.toLocaleString()}</TableCell>
+                                    <TableCell className="font-bold text-green-600">Rp {rule.bonus_amount?.toLocaleString()}</TableCell>
                                     <TableCell className="text-right">
                                         <Button variant="ghost" size="icon" onClick={() => startEditBonus(rule)}>
                                             <Pencil className="h-4 w-4" />
@@ -287,16 +287,16 @@ export default function FeesPage() {
                                 <Label>Min Turnover (Rp)</Label>
                                 <Input
                                     type="number"
-                                    value={currentBonus.min_turnover || 0}
-                                    onChange={(e) => setCurrentBonus({ ...currentBonus, min_turnover: Number(e.target.value) })}
+                                    value={currentBonus.min_daily_revenue || 0}
+                                    onChange={(e) => setCurrentBonus({ ...currentBonus, min_daily_revenue: Number(e.target.value) })}
                                 />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Max Turnover (Rp)</Label>
                                 <Input
                                     type="number"
-                                    value={currentBonus.max_turnover || 0}
-                                    onChange={(e) => setCurrentBonus({ ...currentBonus, max_turnover: Number(e.target.value) })}
+                                    value={currentBonus.max_daily_revenue || 0}
+                                    onChange={(e) => setCurrentBonus({ ...currentBonus, max_daily_revenue: Number(e.target.value) })}
                                 />
                             </div>
                         </div>

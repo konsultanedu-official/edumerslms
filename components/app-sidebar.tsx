@@ -7,7 +7,8 @@ import {
     Package,
     Users,
     CreditCard,
-    FileText
+    FileText,
+    Repeat
 } from "lucide-react"
 
 import {
@@ -25,13 +26,23 @@ import {
 const items = [
     {
         title: "Dashboard",
-        url: "/admin",
+        url: "/admin/dashboard",
         icon: Home,
     },
     {
         title: "Tutors",
         url: "/admin/tutors",
         icon: Users,
+    },
+    {
+        title: "Assignment / Matching",
+        url: "/admin/matching",
+        icon: Inbox,
+    },
+    {
+        title: "Transfers & History",
+        url: "/admin/transfers",
+        icon: Repeat,
     },
     {
         title: "Students",
@@ -47,6 +58,16 @@ const items = [
         title: "RDN Projects",
         url: "/admin/rdn",
         icon: FileText,
+    },
+    {
+        title: "Transactions",
+        url: "/admin/transactions",
+        icon: CreditCard,
+    },
+    {
+        title: "Withdrawals",
+        url: "/admin/withdrawals",
+        icon: CreditCard,
     },
     {
         title: "Fee Configs",
@@ -65,9 +86,9 @@ const items = [
     },
 ]
 
-export function AppSidebar() {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
-        <Sidebar>
+        <Sidebar {...props}>
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupLabel>Edumers Application</SidebarGroupLabel>
